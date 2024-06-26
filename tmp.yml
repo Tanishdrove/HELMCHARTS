@@ -1,0 +1,118 @@
+trigger:
+  - development
+
+resources:
+  - repo: self
+
+variables:
+  #----Common Values--------------------------
+  vmImageName: "ubuntu-latest"
+  containerRegistrySp: 'hcdevusacr-sp'
+  containerRegistry: 'hcdevusacr'
+  tag: "$(Build.BuildNumber)"
+  #-----DEV-------------------------------------
+  imageRepository-dev: 'hf-ui-dev'
+  #-----STAGING---------------------------------
+  imageRepository-staging: 'hf-ui-staging'
+   #-----PROD---------------------------------
+  containerRegistrySp-prod: 'hcprodusacr-sp'
+  containerRegistry-prod: 'hcprodusacr'
+  imageRepository-prod: 'hf-ui-prod'
+  
+stages:
+  - stage: helm_chart_publish
+    dependsOn:
+    displayName: Copy Charts and artifact
+    jobs:
+      - job: Publish
+        displayName: Publish
+        pool:
+          vmImage: $(vmImageName)
+        steps:
+         - checkout: self
+         - task: PublishPipelineArtifact@1
+           inputs:
+              targetPath: 'helmchart'
+              artifact: 'drop'
+              publishLocation: 'pipeline'
+  
+  - stage: Build_dev
+    dependsOn:
+    displayName: Build and push dev acr
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+        variables:
+          - group: hf-ui-dev-k8s
+        steps:
+          - task: Docker@2
+            displayName: "Docker Build"
+            inputs:
+              containerRegistry: "$(containerRegistrySp)"
+              repository: "$(imageRepository-dev)"
+              command: "build"
+              Dockerfile: "**/Dockerfile"
+              tags: "$(tag)"
+          - task: Docker@2
+            displayName: "Docker Push to ACR"
+            inputs:
+              containerRegistry: "$(containerRegistrySp)"
+              repository: "$(imageRepository-dev)"
+              command: "push"
+              tags: "$(tag)"
+
+  - stage: Build_staging
+    dependsOn:
+    displayName: Build and push staging acr
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+        variables:
+          - group: hf-ui-staging-k8s
+        steps:
+          - task: Docker@2
+            displayName: "Docker Build"
+            inputs:
+              containerRegistry: "$(containerRegistrySp)"
+              repository: "$(imageRepository-staging)"
+              command: "build"
+              Dockerfile: "**/Dockerfile"
+              tags: "$(tag)"
+          - task: Docker@2
+            displayName: "Docker Push to ACR"
+            inputs:
+              containerRegistry: "$(containerRegistrySp)"
+              repository: "$(imageRepository-staging)"
+              command: "push"
+              tags: "$(tag)"
+
+  - stage: Build_prod
+    dependsOn:
+    displayName: Build and push prod acr
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: $(vmImageName)
+        variables:
+          - group: hf-ui-prod-k8s
+        steps:
+          - task: Docker@2
+            displayName: "Docker Build"
+            inputs:
+              containerRegistry: "$(containerRegistrySp-prod)"
+              repository: "$(imageRepository-prod)"
+              command: "build"
+              Dockerfile: "**/Dockerfile"
+              tags: "$(tag)"
+          - task: Docker@2
+            displayName: "Docker Push to ACR"
+            inputs:
+              containerRegistry: "$(containerRegistrySp-prod)"
+              repository: "$(imageRepository-prod)"
+              command: "push"
+              tags: "$(tag)"

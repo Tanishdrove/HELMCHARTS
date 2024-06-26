@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tempchart.fullname" . }}
+  labels:
+    app: {{ include "tempchart.name" . }}
+    chart: {{ include "tempchart.chart" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "tempchart.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "tempchart.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "nginx"
+          ports:
+            - containerPort: 80
+          env:
+            - name: FAKE_FNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "tempchart.fullname" . }}-configmap
+                  key: FAKE_FNAME
+            - name: FAKE_LNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "tempchart.fullname" . }}-configmap
+                  key: FAKE_LNAME
+            - name: FAKE_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "tempchart.fullname" . }}-configmap
+                  key: FAKE_EMAIL
+            - name: FAKE_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "tempchart.fullname" . }}-configmap
+                  key: FAKE_ADDRESS
+            - name: FAKE_EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tempchart.fullname" . }}-secret
+                  key: FAKE_EMAIL_PASSWORD
+            - name: FAKE_CONTACT_NUMBER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tempchart.fullname" . }}-secret
+                  key: FAKE_CONTACT_NUMBER

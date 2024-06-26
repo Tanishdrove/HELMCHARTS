@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.depname }}-service
+spec:
+  type: {{ .Values.svctype }}
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: {{ .Values.svcport }}
+      targetPort: {{ .Values.contport }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.depname }}-deployment
+spec:
+  replicas: {{ .Values.replicacount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.applabel }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.applabel }}
+    spec:
+      containers:
+      - name: {{ .Values.containername }}
+        image: {{ .Values.imgname }}
+        ports:
+        - containerPort: {{ .Values.contport }}

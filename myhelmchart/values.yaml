@@ -1,0 +1,8 @@
+depname: "nginx-deployment"
+replicacount: "1"
+containername: "nginx"
+imgname: "httpd:latest"
+contport: "80"
+svctype: "LoadBalancer"
+svcport: "80"
+applabel: "nginx"

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appname }}
+  labels:
+    environment: {{ .Values.envlabel }}
+    application: {{ .Values.applabel }}
+    maintainer: {{ .Values.maintainerlabel }}
+    version: {{ .Values.versionlabel }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      application: {{ .Values.applabel }}
+      managedBy: {{ .Values.managedlabel }}
+  template:
+    metadata:
+      labels:
+        application: {{ .Values.applabel }}
+        managedBy: {{  .Values.managedlabel}}
+    spec:
+      serviceAccountName: {{ .Values.appname }}
+      containers:
+        - name: {{ .Values.appname }}
+          image: {{ .Values.imgname }}
+          imagePullPolicy: {{  .Values.imgpullpolicy}}
+          ports:
+            - name: {{ .Values.portname }}
+              containerPort: {{ .Values.containerport }}
+              protocol: {{ .Values.protocol }}
+          livenessProbe:
+            httpGet:
+              path: {{  .Values.path }}
+              port: {{ .Values.portprotocol }}
+          readinessProbe:
+            httpGet:
+              path: {{  .Values.path }}
+              port: {{ .Values.portprotocol }}
+          resources:
+            limits:
+              cpu: {{ .Values.cpulimit }}
+              memory: {{ .Values.memorylimit }}
+            requests:
+              cpu: {{ .Values.cpureq }}
+              memory: {{ .Values.memreq }}

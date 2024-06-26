@@ -1,0 +1,9 @@
+configMap:
+  FAKE_FNAME: "Tanish"
+  FAKE_LNAME: "Kandira"
+  FAKE_EMAIL: "tanish.kandira@example.com"
+  FAKE_ADDRESS: "Rajasthan, Jaipur"
+
+secret:
+  FAKE_EMAIL_PASSWORD: "password@123"
+  FAKE_CONTACT_NUMBER: "1234567890"
