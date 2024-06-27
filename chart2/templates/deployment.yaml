@@ -1,23 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.appname }}
+  name: {{ .Values.appname | quote}}
   labels:
-    environment: {{ .Values.envlabel }}
-    application: {{ .Values.applabel }}
-    maintainer: {{ .Values.maintainerlabel }}
-    version: {{ .Values.versionlabel }}
+    # environment: {{ .Values.envlabel | quote}}
+    # application: {{ .Values.applabel }}
+    # maintainer: {{ .Values.maintainerlabel }}
+    # version: {{ .Values.versionlabel }}
+    {{- toYaml .Values.labels | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      application: {{ .Values.applabel }}
-      managedBy: {{ .Values.managedlabel }}
+      {{- toYaml .Values.selector | nindent 6 }}
   template:
     metadata:
       labels:
-        application: {{ .Values.applabel }}
-        managedBy: {{  .Values.managedlabel}}
+        {{- toYaml .Values.selector | nindent 8 }}
     spec:
       serviceAccountName: {{ .Values.appname }}
       containers:
@@ -30,16 +29,12 @@ spec:
               protocol: {{ .Values.protocol }}
           livenessProbe:
             httpGet:
-              path: {{  .Values.path }}
-              port: {{ .Values.portprotocol }}
+              {{- toYaml .Values.path | nindent 14 }}
           readinessProbe:
             httpGet:
-              path: {{  .Values.path }}
-              port: {{ .Values.portprotocol }}
+              {{- toYaml .Values.path | nindent 14 }}
           resources:
             limits:
-              cpu: {{ .Values.cpulimit }}
-              memory: {{ .Values.memorylimit }}
+              {{- toYaml .Values.resourceslimit | nindent 14 }}
             requests:
-              cpu: {{ .Values.cpureq }}
-              memory: {{ .Values.memreq }}
+              {{- toYaml .Values.resourcesreq | nindent 14}}

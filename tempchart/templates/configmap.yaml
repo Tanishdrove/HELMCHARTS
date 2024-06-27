@@ -6,7 +6,10 @@ metadata:
     app: {{ include "tempchart.name" . }}
     chart: {{ include "tempchart.chart" . }}
 data:
-  FAKE_FNAME: {{ .Values.configMap.FAKE_FNAME | quote }}
-  FAKE_LNAME: {{ .Values.configMap.FAKE_LNAME | quote }}
-  FAKE_EMAIL: {{ .Values.configMap.FAKE_EMAIL | quote }}
-  FAKE_ADDRESS: {{ .Values.configMap.FAKE_ADDRESS | quote }}
+  # FAKE_FNAME: {{ .Values.configMap.FAKE_FNAME | quote }}
+  # FAKE_LNAME: {{ .Values.configMap.FAKE_LNAME | quote }}
+  # FAKE_EMAIL: {{ .Values.configMap.FAKE_EMAIL | quote }}
+  # FAKE_ADDRESS: {{ .Values.configMap.FAKE_ADDRESS | quote }}
+  {{- range $key, $value := .Values.configMap }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}

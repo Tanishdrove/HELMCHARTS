@@ -10,9 +10,26 @@ imgpullpolicy: "IfNotPresent"
 portname: "http"
 containerport: "80"
 protocol: "TCP"
-path: "/"
-cpulimit: "2048m"
-memorylimit: "16Gi"
-cpureq: "512m"
-memreq: "4Gi"
 portprotocol: "http"
+
+labels:
+  environment: "learning"
+  application: "nginx"
+  maintainer: "helm"
+  version: "v2"
+
+selector:
+  application: "nginx"
+  managedBy: "deployment"
+
+path:
+  path: "/"
+  port: "http"
+
+resourceslimit:
+  cpu: "2048m"
+  memory: "16Gi"
+
+resourcesreq:
+  cpu: "512m"
+  memory: "4Gi"
