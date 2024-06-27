@@ -23,33 +23,39 @@ spec:
           ports:
             - containerPort: 80
           env:
-            - name: FAKE_FNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "tempchart.fullname" . }}-configmap
-                  key: FAKE_FNAME
-            - name: FAKE_LNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "tempchart.fullname" . }}-configmap
-                  key: FAKE_LNAME
-            - name: FAKE_EMAIL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "tempchart.fullname" . }}-configmap
-                  key: FAKE_EMAIL
-            - name: FAKE_ADDRESS
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "tempchart.fullname" . }}-configmap
-                  key: FAKE_ADDRESS
-            - name: FAKE_EMAIL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "tempchart.fullname" . }}-secret
-                  key: FAKE_EMAIL_PASSWORD
-            - name: FAKE_CONTACT_NUMBER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "tempchart.fullname" . }}-secret
-                  key: FAKE_CONTACT_NUMBER
+            {{- range $key, $value := .Values.configMap  }}
+              - name: {{ $key }}
+                valueFrom:
+                  configMapKeyRef:
+                    name: {{ template "tempchart.fullname" $ }}-configmap
+                    key: {{ $key }}
+            {{- end }}
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: {{ include "tempchart.fullname" . }}-configmap
+            #       key: FAKE_FNAME
+            # - name: FAKE_LNAME
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: {{ include "tempchart.fullname" . }}-configmap
+            #       key: FAKE_LNAME
+            # - name: FAKE_EMAIL
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: {{ include "tempchart.fullname" . }}-configmap
+            #       key: FAKE_EMAIL
+            # - name: FAKE_ADDRESS
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: {{ include "tempchart.fullname" . }}-configmap
+            #       key: FAKE_ADDRESS
+            # - name: FAKE_EMAIL_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: {{ include "tempchart.fullname" . }}-secret
+            #       key: FAKE_EMAIL_PASSWORD
+            # - name: FAKE_CONTACT_NUMBER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: {{ include "tempchart.fullname" . }}-secret
+            #       key: FAKE_CONTACT_NUMBER

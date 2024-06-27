@@ -7,3 +7,4 @@ configMap:
 secret:
   FAKE_EMAIL_PASSWORD: "password@123"
   FAKE_CONTACT_NUMBER: "1234567890"
+
